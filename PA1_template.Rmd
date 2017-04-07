@@ -68,19 +68,24 @@ included in the final dataset are:
 Note that this stores the current system time data with this value which is to be 
 disregarded for the analysis
 
+• `day`: The day of the week
+
 • `time`: A variable constructed which joins the observation date with the time
 
 • `constructedData`: This is a transformed version of the `sourcedData` data.frame 
 where all NAs have been replaced with the average value for the interval.
 
-• `Q1`: This is the data.frame associated with Question 1 output
+• `Q1`: This is the data.frame associated with Question 1 output.
 
-• `Average.StepsPerDay`: A list containing the median and mean in answer to Question 1
+• `Average.StepsPerDay`: A list containing the median and mean in answer to Question 1.
 
-• `Q2`: This is the data.frame associated with Question 2 output
+• `Q2`: This is the data.frame associated with Question 2 output.
 
-• `activityPeak`: A list containing the lower and upper bounds for the most active 
-interval n answer to Question 2
+• `activityPeak`: A list containing the lower and upper bounds for the most active
+interval in answer to Question 2.
+
+• `Q3`: This a list of two data.frames `weekend` and `weekday` associated with 
+Question 3 output.
 
 ## System Info and Library Prerequisites
 
@@ -95,6 +100,7 @@ interval n answer to Question 2
 # 1.0 prerequisite
       library(dplyr)
       library(stringr)
+      library(ggplot2)
 ```
 
 ```{r library status, echo=FALSE}
@@ -105,12 +111,20 @@ interval n answer to Question 2
       }
       
       message("dplyr ",packageVersion("dplyr")," was used during for the production of this analysis")
+      
       if(!exists("str_pad")){
             message<-message("stringr 1.1.0 or greater is required")
             return()
       }
       
       message("stringr ",packageVersion("stringr")," was used during for the production of this analysis")
+      
+            if(!exists("ggplot")){
+            message<-message("ggplot2 2.1.0 or greater is required")
+            return()
+      }
+      
+      message("ggplot2 ",packageVersion("ggplot2")," was used during for the production of this analysis")
 
 ```
 ### Prerequisite Common Functions
@@ -172,6 +186,8 @@ sourceData<-function(src=URL,expectedfiles="activity.csv",workspaceNames="source
       sourcedData$time<<-paste(sourcedData$date,sourcedData$interval)
       sourcedData$time<<-as.POSIXct(strptime(sourcedData$time,"%Y-%m-%d %H%M"))
       sourcedData$timeOnly<<-as.POSIXct(strptime(sourcedData$interval,"%H%M"))
+      
+      sourcedData$day<-weekdays(sourcedData$time)
       ## retains the sourcedata variable for the project workspace
       keep("sourcedData")
       }
@@ -200,9 +216,10 @@ sourceData(URL)
 ```
 
 The data when it was loaded in shows there are `r nrow(sourcedData)` observations 
-and `r length(sourcedData)-2` variables. The `interval` variable represents a 
+and `r length(sourcedData)-3` variables. The `interval` variable represents a 
 24 hour time and a new variable has been introduced called `time` joining the date 
-and time together into a single POSIXct date time. The [variables][4] are 
+and time together into a single POSIXct date time. Another variable called `day`
+has also been included which is needed for [question 3][3]. The [variables][4] are 
 called `r names(sourcedData)`.
 
 Running `summary()` on the loaded data shows there are `r metadata$summary[7,1]`
@@ -242,7 +259,7 @@ this set of observations.
       Average.StepsPerDay <- list(NULL)
       keep(Average.StepsPerDay)
       Average.StepsPerDay$mean <- as.integer(mean(Q1$steps.Total[Q1$steps.Total!=0]))
-      Average.StepsPerDay$median <- as.integer(mean(Q1$steps.Total[Q1$steps.Total!=0]))
+      Average.StepsPerDay$median <- as.integer(median(Q1$steps.Total[Q1$steps.Total!=0]))
 ```
 Excluding the days where no data was collected:
 
@@ -267,9 +284,9 @@ based on the average interval.
 #impute the average of the interval where there is the NA
       constructedData$steps<-Q2$`mean(steps, na.rm = TRUE)`
 #bind the two dataframes together
-      constructedData<-bind_rows(constructedData,subset(sourcedData,!is.na(sourcedData$steps)))
+      constructedData<-dplyr::bind_rows(constructedData,subset(sourcedData,!is.na(sourcedData$steps)))
 #reorder by time
-      constructedData<-arrange(constructedData, time)
+      constructedData<-dplyr::arrange(constructedData, time)
       
       str(constructedData)
       
@@ -321,14 +338,48 @@ There are **`r NAcount` NAs** in the `constructedData` data.
       
 ```
 
-The **most active time interval** is in the morning at **`r activityPeak$most.lower`**
-- **`r activityPeak$most.upper`**
+The **most active time interval** is in the morning at **`r activityPeak$most.lower`** - **`r activityPeak$most.upper`**
 
 
 
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
 
+A new factor is made in the column `weekdayType` within the `constructedData` data.frame
 
+```{r}
+
+      constructedData$weekdayType<-as.factor(
+                  ifelse(constructedData$day=="Saturday"|constructedData$day=="Sunday",
+                  "weekend","weekday"))
+
+      Q3<-split(constructedData,constructedData$weekdayType)
+      keep("Q3")
+            
+      str(Q3)
+
+```
+
+
+```{r}
+
+      par( mfrow= c(2,1) ) 
+
+      plot(x=Q3$weekday$timeOnly,y=Q3$weekday$steps,
+           main="Activity on the weekdays",
+           xlab="time of day",
+           ylab="number of steps",
+           col=rgb(.5,.5,.5,.1),
+           pch=20)
+      
+      plot(x=Q3$weekend$timeOnly,y=Q3$weekend$steps,
+           main="Activity on the weekend days",
+           xlab="time of day",
+           ylab="number of steps",
+           col=rgb(.5,.5,.5,.1),
+           pch=20)
+
+
+```
 
 
 

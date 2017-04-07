@@ -57,19 +57,24 @@ included in the final dataset are:
 Note that this stores the current system time data with this value which is to be 
 disregarded for the analysis
 
+• `day`: The day of the week
+
 • `time`: A variable constructed which joins the observation date with the time
 
 • `constructedData`: This is a transformed version of the `sourcedData` data.frame 
 where all NAs have been replaced with the average value for the interval.
 
-• `Q1`: This is the data.frame associated with Question 1 output
+• `Q1`: This is the data.frame associated with Question 1 output.
 
-• `Average.StepsPerDay`: A list containing the median and mean in answer to Question 1
+• `Average.StepsPerDay`: A list containing the median and mean in answer to Question 1.
 
-• `Q2`: This is the data.frame associated with Question 2 output
+• `Q2`: This is the data.frame associated with Question 2 output.
 
-• `activityPeak`: A list containing the lower and upper bounds for the most active 
-interval n answer to Question 2
+• `activityPeak`: A list containing the lower and upper bounds for the most active
+interval in answer to Question 2.
+
+• `Q3`: This a list of two data.frames `weekend` and `weekday` associated with 
+Question 3 output.
 
 ## System Info and Library Prerequisites
 
@@ -92,6 +97,10 @@ interval n answer to Question 2
 
 ```
 ## stringr 1.1.0 was used during for the production of this analysis
+```
+
+```
+## ggplot2 2.1.0 was used during for the production of this analysis
 ```
 ### Prerequisite Common Functions
 
@@ -154,6 +163,8 @@ sourceData<-function(src=URL,expectedfiles="activity.csv",workspaceNames="source
       sourcedData$time<<-paste(sourcedData$date,sourcedData$interval)
       sourcedData$time<<-as.POSIXct(strptime(sourcedData$time,"%Y-%m-%d %H%M"))
       sourcedData$timeOnly<<-as.POSIXct(strptime(sourcedData$interval,"%H%M"))
+      
+      sourcedData$day<-weekdays(sourcedData$time)
       ## retains the sourcedata variable for the project workspace
       keep("sourcedData")
       }
@@ -185,19 +196,21 @@ sourceData(URL)
 ```
 
 ```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	17568 obs. of  5 variables:
+## 'data.frame':	17568 obs. of  6 variables:
 ##  $ steps   : num  NA NA NA NA NA NA NA NA NA NA ...
 ##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
 ##  $ interval: chr  "0000" "0005" "0010" "0015" ...
 ##  $ time    : POSIXct, format: "2012-10-01 00:00:00" "2012-10-01 00:05:00" ...
 ##  $ timeOnly: POSIXct, format: "2017-04-07 00:00:00" "2017-04-07 00:05:00" ...
+##  $ day     : chr  "Monday" "Monday" "Monday" "Monday" ...
 ```
 
 The data when it was loaded in shows there are 17568 observations 
 and 3 variables. The `interval` variable represents a 
 24 hour time and a new variable has been introduced called `time` joining the date 
-and time together into a single POSIXct date time. The [variables][4] are 
-called steps, date, interval, time, timeOnly.
+and time together into a single POSIXct date time. Another variable called `day`
+has also been included which is needed for [question 3][3]. The [variables][4] are 
+called steps, date, interval, time, timeOnly, day.
 
 Running `summary()` on the loaded data shows there are NA's   :2304  
 The observations were taken between 2012-10-01, 2012-11-30.
@@ -238,7 +251,7 @@ this set of observations.
       Average.StepsPerDay <- list(NULL)
       keep(Average.StepsPerDay)
       Average.StepsPerDay$mean <- as.integer(mean(Q1$steps.Total[Q1$steps.Total!=0]))
-      Average.StepsPerDay$median <- as.integer(mean(Q1$steps.Total[Q1$steps.Total!=0]))
+      Average.StepsPerDay$median <- as.integer(median(Q1$steps.Total[Q1$steps.Total!=0]))
 ```
 Excluding the days where no data was collected:
 
@@ -246,7 +259,7 @@ The **mean number** of steps taken per day are
 10766 (to nearest whole number).
 
 The **median number** of steps taken per day are 
-10766  (to nearest whole number).
+10765  (to nearest whole number).
 
 ### Question 2 - What is the average daily activity pattern?
 
@@ -263,20 +276,21 @@ based on the average interval.
 #impute the average of the interval where there is the NA
       constructedData$steps<-Q2$`mean(steps, na.rm = TRUE)`
 #bind the two dataframes together
-      constructedData<-bind_rows(constructedData,subset(sourcedData,!is.na(sourcedData$steps)))
+      constructedData<-dplyr::bind_rows(constructedData,subset(sourcedData,!is.na(sourcedData$steps)))
 #reorder by time
-      constructedData<-arrange(constructedData, time)
+      constructedData<-dplyr::arrange(constructedData, time)
       
       str(constructedData)
 ```
 
 ```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	17568 obs. of  5 variables:
+## Classes 'tbl_df', 'tbl' and 'data.frame':	17568 obs. of  6 variables:
 ##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
 ##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
 ##  $ interval: chr  "0000" "0005" "0010" "0015" ...
 ##  $ time    : POSIXct, format: "2012-10-01 00:00:00" "2012-10-01 00:05:00" ...
 ##  $ timeOnly: POSIXct, format: "2017-04-07 00:00:00" "2017-04-07 00:05:00" ...
+##  $ day     : chr  "Monday" "Monday" "Monday" "Monday" ...
 ```
 
 ```r
@@ -331,14 +345,65 @@ There are **0 NAs** in the `constructedData` data.
       activityPeak$most.upper<-format.Date(Q2$time[Q2$steps.Mean==max(Q2$steps.Mean)]+299,"%T")
 ```
 
-The **most active time interval** is in the morning at **08:35:00**
-- **08:39:59**
+The **most active time interval** is in the morning at **08:35:00** - **08:39:59**
 
 
 
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
 
+A new factor is made in the column `weekdayType` within the `constructedData` data.frame
 
+
+```r
+      constructedData$weekdayType<-as.factor(
+                  ifelse(constructedData$day=="Saturday"|constructedData$day=="Sunday",
+                  "weekend","weekday"))
+
+      Q3<-split(constructedData,constructedData$weekdayType)
+      keep("Q3")
+            
+      str(Q3)
+```
+
+```
+## List of 2
+##  $ weekday:Classes 'tbl_df', 'tbl' and 'data.frame':	12960 obs. of  7 variables:
+##   ..$ steps      : num [1:12960] 1.717 0.3396 0.1321 0.1509 0.0755 ...
+##   ..$ date       : Date[1:12960], format: "2012-10-01" ...
+##   ..$ interval   : chr [1:12960] "0000" "0005" "0010" "0015" ...
+##   ..$ time       : POSIXct[1:12960], format: "2012-10-01 00:00:00" ...
+##   ..$ timeOnly   : POSIXct[1:12960], format: "2017-04-07 00:00:00" ...
+##   ..$ day        : chr [1:12960] "Monday" "Monday" "Monday" "Monday" ...
+##   ..$ weekdayType: Factor w/ 2 levels "weekday","weekend": 1 1 1 1 1 1 1 1 1 1 ...
+##  $ weekend:Classes 'tbl_df', 'tbl' and 'data.frame':	4608 obs. of  7 variables:
+##   ..$ steps      : num [1:4608] 0 0 0 0 0 0 0 0 0 0 ...
+##   ..$ date       : Date[1:4608], format: "2012-10-06" ...
+##   ..$ interval   : chr [1:4608] "0000" "0005" "0010" "0015" ...
+##   ..$ time       : POSIXct[1:4608], format: "2012-10-06 00:00:00" ...
+##   ..$ timeOnly   : POSIXct[1:4608], format: "2017-04-07 00:00:00" ...
+##   ..$ day        : chr [1:4608] "Saturday" "Saturday" "Saturday" "Saturday" ...
+##   ..$ weekdayType: Factor w/ 2 levels "weekday","weekend": 2 2 2 2 2 2 2 2 2 2 ...
+```
+
+
+
+```r
+      par( mfrow= c(2,1) )    
+      plot(x=Q3$weekday$timeOnly,y=Q3$weekday$steps,
+           main="Activity on the weekdays",
+           xlab="time of day",
+           ylab="number of steps",
+           col=rgb(.5,.5,.5,.1),
+           pch=20)
+      plot(x=Q3$weekend$timeOnly,y=Q3$weekend$steps,
+           main="Activity on the weekend",
+           xlab="time of day",
+           ylab="number of steps",
+           col=rgb(.5,.5,.5,.1),
+           pch=20)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 
 
