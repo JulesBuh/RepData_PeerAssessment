@@ -1,0 +1,42 @@
+# Peer-graded Assignment: Course Project 1
+
+```{r Run Date, include=FALSE}
+Runtime <- Sys.Date()
+```
+
+---
+title: "PA1_template.Rmd"
+author: "Julian Buhagiar"
+date: 2017-04-07
+output: html_document
+---
+
+date last modified: `r Runtime` 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# remove runtime used which is only used for the header of this document
+rm(Runtime)
+```
+
+
+
+##Questions
+
+      •[What is mean total number of steps taken per day?]
+      
+      •[What is the average daily activity pattern?]
+      
+      •[Are there differences in activity patterns between weekdays and weekends?]
+
+
+##Description
+
+This assignment makes use of data from a personal activity monitoring device. 
+This device collects data at 5 minute intervals through out the day. The data 
+consists of two months of data from an anonymous individual collected during 
+the months of October and November, 2012 and include the number of steps taken 
+in 5 minute intervals each day.
+```{r source file, echo=TRUE}
+URL = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+```
