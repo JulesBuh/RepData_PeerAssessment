@@ -38,6 +38,8 @@ URL = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 
 ## Variables
 
+### pre-process
+
 included in the source dataset are:
 
 • `steps`: Number of steps taking in a 5-minute interval (missing values are coded as NA)
@@ -45,6 +47,17 @@ included in the source dataset are:
 • `date`: The date on which the measurement was taken in YYYY-MM-DD format
 
 • `interval`: Identifier for the 5-minute interval in which measurement was taken
+
+### post-process
+included in the final dataset are:
+
+• `sourcedData`: The data.frame that was read into R
+
+• `timeOnly`: A variable constructed which converts the interval into a time
+Note that this stores the current system time data with this value which is to be 
+disregarded for the analysis
+
+• `time`: A variable constructed which joins the observation date with the time
 
 ## System Info and Library Prerequisites
 
@@ -169,9 +182,9 @@ sourceData(URL)
 ```
 
 The data when it was loaded in shows there are 17568 observations 
-and 4 variables. The `interval` variable represents a 24 hour time
+and 3 variables. The `interval` variable represents a 24 hour time
 and a new variable has been introduced called `time` joining the date and time together into a 
-single POSIXct date time. The variables are called steps, date, interval, time, timeOnly.
+single POSIXct date time. The [variables][4] are called steps, date, interval, time, timeOnly.
 
 Running `summary()` on the loaded data shows there are NA's   :2304  
 The observations were taken between 2012-10-01, 2012-11-30.
@@ -182,8 +195,10 @@ The observations were taken between 2012-10-01, 2012-11-30.
 
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
 
-[1]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-1---what-is-mean-total-number-of-steps-taken-per-day
+[1]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-1---what-is-mean-total-number-of-steps-taken-per-day
 
-[2]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-2---what-is-the-average-daily-activity-pattern
+[2]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-2---what-is-the-average-daily-activity-pattern
 
-[3]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends
+[3]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends
+
+[4]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#variables

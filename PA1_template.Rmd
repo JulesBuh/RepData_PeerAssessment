@@ -188,9 +188,9 @@ sourceData(URL)
 ```
 
 The data when it was loaded in shows there are `r nrow(sourcedData)` observations 
-and `r length(sourcedData)-1` variables. The `interval` variable represents a 24 hour time
+and `r length(sourcedData)-2` variables. The `interval` variable represents a 24 hour time
 and a new variable has been introduced called `time` joining the date and time together into a 
-single POSIXct date time. The variables are called `r names(sourcedData)`.
+single POSIXct date time. The [variables][4] are called `r names(sourcedData)`.
 
 Running `summary()` on the loaded data shows there are `r metadata$summary[7,1]`
 The observations were taken between `r range(sourcedData$date)`.
@@ -201,8 +201,10 @@ The observations were taken between `r range(sourcedData$date)`.
 
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
 
-[1]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-1---what-is-mean-total-number-of-steps-taken-per-day
+[1]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-1---what-is-mean-total-number-of-steps-taken-per-day
 
-[2]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-2---what-is-the-average-daily-activity-pattern
+[2]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-2---what-is-the-average-daily-activity-pattern
 
-[3]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends
+[3]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends
+
+[4]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#variables

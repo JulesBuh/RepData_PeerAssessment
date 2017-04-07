@@ -12,7 +12,7 @@ questions about the given dataset.
       - Are there differences in activity patterns between weekdays and weekends?
 
 
-The [md file][1] is structured as follows:
+The [md file][3] is structured as follows:
 
       1. Questions
       2. Description

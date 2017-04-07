@@ -128,7 +128,10 @@ $(document).ready(function () {
 <li><a href="#peer-graded-assignment-course-project-1">Peer-graded Assignment: Course Project 1</a><ul>
 <li><a href="#questions">Questions</a></li>
 <li><a href="#description">Description</a></li>
-<li><a href="#variables">Variables</a></li>
+<li><a href="#variables">Variables</a><ul>
+<li><a href="#pre-process">pre-process</a></li>
+<li><a href="#post-process">post-process</a></li>
+</ul></li>
 <li><a href="#system-info-and-library-prerequisites">System Info and Library Prerequisites</a><ul>
 <li><a href="#system">System</a></li>
 <li><a href="#libraries">Libraries</a></li>
@@ -148,9 +151,9 @@ $(document).ready(function () {
 <p>date last modified: 2017-04-07</p>
 <div id="questions" class="section level2">
 <h2>Questions</h2>
-<p><a href="https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-1---what-is-mean-total-number-of-steps-taken-per-day">What is mean total number of steps taken per day?</a></p>
-<p><a href="https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-2---what-is-the-average-daily-activity-pattern">What is the average daily activity pattern?</a></p>
-<p><a href="https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends">Are there differences in activity patterns between weekdays and weekends?</a></p>
+<p><a href="https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-1---what-is-mean-total-number-of-steps-taken-per-day">What is mean total number of steps taken per day?</a></p>
+<p><a href="https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-2---what-is-the-average-daily-activity-pattern">What is the average daily activity pattern?</a></p>
+<p><a href="https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends">Are there differences in activity patterns between weekdays and weekends?</a></p>
 </div>
 <div id="description" class="section level2">
 <h2>Description</h2>
@@ -159,10 +162,20 @@ $(document).ready(function () {
 </div>
 <div id="variables" class="section level2">
 <h2>Variables</h2>
+<div id="pre-process" class="section level3">
+<h3>pre-process</h3>
 <p>included in the source dataset are:</p>
 <p>• <code>steps</code>: Number of steps taking in a 5-minute interval (missing values are coded as NA)</p>
 <p>• <code>date</code>: The date on which the measurement was taken in YYYY-MM-DD format</p>
 <p>• <code>interval</code>: Identifier for the 5-minute interval in which measurement was taken</p>
+</div>
+<div id="post-process" class="section level3">
+<h3>post-process</h3>
+<p>included in the final dataset are:</p>
+<p>• <code>sourcedData</code>: The data.frame that was read into R</p>
+<p>• <code>timeOnly</code>: A variable constructed which converts the interval into a time Note that this stores the current system time data with this value which is to be disregarded for the analysis</p>
+<p>• <code>time</code>: A variable constructed which joins the observation date with the time</p>
+</div>
 </div>
 <div id="system-info-and-library-prerequisites" class="section level2">
 <h2>System Info and Library Prerequisites</h2>
@@ -257,7 +270,7 @@ cleanWorkspace&lt;-function(){
 ##  $ interval: chr  &quot;0000&quot; &quot;0005&quot; &quot;0010&quot; &quot;0015&quot; ...
 ##  $ time    : POSIXct, format: &quot;2012-10-01 00:00:00&quot; &quot;2012-10-01 00:05:00&quot; ...
 ##  $ timeOnly: POSIXct, format: &quot;2017-04-07 00:00:00&quot; &quot;2017-04-07 00:05:00&quot; ...</code></pre>
-<p>The data when it was loaded in shows there are 17568 observations and 4 variables. The <code>interval</code> variable represents a 24 hour time and a new variable has been introduced called <code>time</code> joining the date and time together into a single POSIXct date time. The variables are called steps, date, interval, time, timeOnly.</p>
+<p>The data when it was loaded in shows there are 17568 observations and 3 variables. The <code>interval</code> variable represents a 24 hour time and a new variable has been introduced called <code>time</code> joining the date and time together into a single POSIXct date time. The <a href="https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#variables">variables</a> are called steps, date, interval, time, timeOnly.</p>
 <p>Running <code>summary()</code> on the loaded data shows there are NA’s :2304<br />
 The observations were taken between 2012-10-01, 2012-11-30.</p>
 <div id="question-1---what-is-mean-total-number-of-steps-taken-per-day" class="section level3">
