@@ -70,6 +70,8 @@ disregarded for the analysis
 
 • `time`: A variable constructed which joins the observation date with the time
 
+• `Q1`: This is the data.frame associated with Question 1 output
+
 ## System Info and Library Prerequisites
 
 ### System
@@ -188,14 +190,51 @@ sourceData(URL)
 ```
 
 The data when it was loaded in shows there are `r nrow(sourcedData)` observations 
-and `r length(sourcedData)-2` variables. The `interval` variable represents a 24 hour time
-and a new variable has been introduced called `time` joining the date and time together into a 
-single POSIXct date time. The [variables][4] are called `r names(sourcedData)`.
+and `r length(sourcedData)-2` variables. The `interval` variable represents a 
+24 hour time and a new variable has been introduced called `time` joining the date 
+and time together into a single POSIXct date time. The [variables][4] are 
+called `r names(sourcedData)`.
 
 Running `summary()` on the loaded data shows there are `r metadata$summary[7,1]`
 The observations were taken between `r range(sourcedData$date)`.
 
 ### Question 1 - What is mean total number of steps taken per day?
+
+```{r Q1, echo=TRUE}
+      Q1<-as.data.frame(summarise(group_by(sourcedData,date),
+                                   sum(steps,na.rm = TRUE)
+                                   ))
+      names(Q1)<-c("date","steps.Total")
+      keep("Q1")
+      hist(as.matrix(Q1$steps.Total[Q1$steps.Total!=0]),
+           xlab="Total number of steps in a day",
+           main="Plot 1: Distribution for the number of steps taken in a day",
+           breaks= 20)
+      rug(as.matrix(Q1$steps.Total[Q1$steps.Total!=0]),col="grey")
+      abline(v=mean(Q1$steps.Total[Q1$steps.Total!=0]),col="blue",lty=3,lwd=5)
+      
+      abline(v=median(Q1$steps.Total[Q1$steps.Total!=0]),col="red",lty=5,lwd=1)
+      
+      legend("topright",legend=c("mean","median"),col=c("blue","red"),lty=c(3,5),lwd=c(5,1))
+      
+      
+```
+
+
+The total number of steps per day can be seen in the result of the `Q1` data.frame
+
+Plot 1 shows an evenly balanced distribution with the most common
+number of steps per day is between 10000 and 11000. The plot also shows that the 
+mean and median are close to eachother indicating there is very little skew for 
+this set of observations.
+
+Excluding the days where no data was collected:
+
+The **mean number** of steps taken per day are 
+`r as.integer(mean(Q1$steps.Total[Q1$steps.Total!=0]))` (to nearest whole number).
+
+The **median number** of steps taken per day are 
+`r as.integer(median(Q1$steps.Total[Q1$steps.Total!=0]))`  (to nearest whole number).
 
 ### Question 2 - What is the average daily activity pattern?
 
