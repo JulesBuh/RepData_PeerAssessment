@@ -64,6 +64,13 @@ where all NAs have been replaced with the average value for the interval.
 
 • `Q1`: This is the data.frame associated with Question 1 output
 
+• `Average.StepsPerDay`: A list containing the median and mean in answer to Question 1
+
+• `Q2`: This is the data.frame associated with Question 2 output
+
+• `activityPeak`: A list containing the lower and upper bounds for the most active 
+interval n answer to Question 2
+
 ## System Info and Library Prerequisites
 
 ### System
@@ -226,13 +233,20 @@ number of steps per day is between 10000 and 11000. The plot also shows that the
 mean and median are close to eachother indicating there is very little skew for 
 this set of observations.
 
+
+```r
+      Average.StepsPerDay <- list(NULL)
+      keep(Average.StepsPerDay)
+      Average.StepsPerDay$mean <- as.integer(mean(Q1$steps.Total[Q1$steps.Total!=0]))
+      Average.StepsPerDay$median <- as.integer(mean(Q1$steps.Total[Q1$steps.Total!=0]))
+```
 Excluding the days where no data was collected:
 
 The **mean number** of steps taken per day are 
 10766 (to nearest whole number).
 
 The **median number** of steps taken per day are 
-10765  (to nearest whole number).
+10766  (to nearest whole number).
 
 ### Question 2 - What is the average daily activity pattern?
 
@@ -273,7 +287,60 @@ There were **2304 NAs** in the `sourcedData` data.
 There are **0 NAs** in the `constructedData` data.
 
 
+
+```r
+      Q2<-as.data.frame(summarise(group_by(constructedData,timeOnly,interval),
+                                   mean(steps,na.rm = TRUE)
+                                   ))
+      names(Q2)<-c("time","interval","steps.Mean")
+      keep("Q2")
+      
+      with(constructedData,
+           plot(x=timeOnly,
+                y=steps,
+                col=rgb(.5,.5,.5,.1),
+                pch=20,
+                ylab="Number of Steps",
+                xlab="Time of Day",
+                main = "Plot 2: Activity over a day"))
+      
+      with(Q2,points(x=time,
+                     y=steps.Mean,col="red",
+                     type="l",
+                     ylim=c(0,max(sourcedData$steps,na.rm=TRUE))
+                     ))
+      
+      legend("topright",
+             legend=c("average number of steps at time interval"),
+             col=c("red"),
+             lty=c(1),
+             lwd=c(1),
+             box.col="transparent",
+             bg = "transparent" )
+```
+
+![](PA1_template_files/figure-html/Q2-1.png)<!-- -->
+ 
+ The average activity across a day for the study period can be seen in Plot 2. 
+ 
+
+```r
+      activityPeak<-list(NULL)
+      keep(activityPeak)
+      activityPeak$most.lower<-format.Date(Q2$time[Q2$steps.Mean==max(Q2$steps.Mean)],"%T")
+      activityPeak$most.upper<-format.Date(Q2$time[Q2$steps.Mean==max(Q2$steps.Mean)]+299,"%T")
+```
+
+The **most active time interval** is in the morning at **08:35:00**
+- **08:39:59**
+
+
+
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
+
+
+
+
 
 [1]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md#question-1---what-is-mean-total-number-of-steps-taken-per-day
 
