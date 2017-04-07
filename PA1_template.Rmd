@@ -160,6 +160,21 @@ sourceData<-function(src=URL,expectedfiles="activity.csv",workspaceNames="source
 
 ## Analysis Run Sequence
 
+The call to the function `sourceData()` loads the data into R.
+
+```{r load data}
+
+sourceData(URL)
+```
+
+The data when it was loaded in shows there are `r nrow(sourcedData)` observations 
+and `r length(sourcedData)-1` variables. The `interval` variable represents a 24 hour time
+and a new variable has been introduced called `time` joining the date and time together into a 
+single POSIXct date time. The variables are called `r names(sourcedData)`.
+
+Running `summary()` on the loaded data shows there are `r metadata$summary[7,1]`
+The observations were taken between `r range(sourcedData$date)`.
+
 ### Question 1 - What is mean total number of steps taken per day?
 
 ### Question 2 - What is the average daily activity pattern?

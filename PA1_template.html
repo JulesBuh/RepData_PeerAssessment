@@ -228,6 +228,19 @@ cleanWorkspace&lt;-function(){
 </div>
 <div id="analysis-run-sequence" class="section level2">
 <h2>Analysis Run Sequence</h2>
+<p>The call to the function <code>sourceData()</code> loads the data into R.</p>
+<pre class="r"><code>sourceData(URL)</code></pre>
+<pre><code>## downloading files</code></pre>
+<pre><code>## Data loaded successfully into the workspace as 'sourcedData'</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    17568 obs. of  5 variables:
+##  $ steps   : num  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Date, format: &quot;2012-10-01&quot; &quot;2012-10-01&quot; ...
+##  $ interval: chr  &quot;0000&quot; &quot;0005&quot; &quot;0010&quot; &quot;0015&quot; ...
+##  $ time    : POSIXct, format: &quot;2012-10-01 00:00:00&quot; &quot;2012-10-01 00:05:00&quot; ...
+##  $ timeOnly: POSIXct, format: &quot;2017-04-07 00:00:00&quot; &quot;2017-04-07 00:05:00&quot; ...</code></pre>
+<p>The data when it was loaded in shows there are 17568 observations and 4 variables. The <code>interval</code> variable represents a 24 hour time and a new variable has been introduced called <code>time</code> joining the date and time together into a single POSIXct date time. The variables are called steps, date, interval, time, timeOnly.</p>
+<p>Running <code>summary()</code> on the loaded data shows there are NA’s :2304<br />
+The observations were taken between 2012-10-01, 2012-11-30.</p>
 <div id="question-1---what-is-mean-total-number-of-steps-taken-per-day" class="section level3">
 <h3>Question 1 - What is mean total number of steps taken per day?</h3>
 </div>
