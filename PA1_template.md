@@ -1,14 +1,6 @@
----
-output: 
-  html_document: 
-    keep_md: yes
-    toc: yes
----
 # Peer-graded Assignment: Course Project 1
 
-```{r Run Date, include=FALSE}
-Runtime <- Sys.Date()
-```
+
 
 ---
 title: "PA1_template.Rmd"
@@ -17,13 +9,9 @@ date: 2017-04-07
 output: html_document
 ---
 
-date last modified: `r Runtime` 
+date last modified: 2017-04-07 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-# remove runtime used which is only used for the header of this document
-rm(Runtime)
-```
+
 
 
 
@@ -43,7 +31,8 @@ This device collects data at 5 minute intervals through out the day. The data
 consists of two months of data from an anonymous individual collected during 
 the months of October and November, 2012 and include the number of steps taken 
 in 5 minute intervals each day.
-```{r source file, echo=TRUE}
+
+```r
 URL = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 ```
 
@@ -60,33 +49,24 @@ included in the source dataset are:
 ## System Info and Library Prerequisites
 
 ### System
-```{r prerequisites, echo=FALSE}
 
-      message("R version\t",version$version.string)
-      message("OS\t",version$os)
+```
+## R version	R version 3.3.2 (2016-10-31)
+```
+
+```
+## OS	mingw32
 ```
 ### Libraries
-```{r load libraries, include=FALSE}
-# 1.0 prerequisite
-      library(dplyr)
-      library(stringr)
+
+
+
+```
+## dplyr 0.5.0 was used during for the production of this analysis
 ```
 
-```{r library status, echo=FALSE}
-# 1.0 prerequisite
-      if(!exists("tbl_df")){
-            message<-message("dplyr 0.4.0 or greater is required")
-            return()
-      }
-      
-      message("dplyr ",packageVersion("dplyr")," was used during for the production of this analysis")
-      if(!exists("str_pad")){
-            message<-message("stringr 1.1.0 or greater is required")
-            return()
-      }
-      
-      message("stringr ",packageVersion("stringr")," was used during for the production of this analysis")
-
+```
+## stringr 1.1.0 was used during for the production of this analysis
 ```
 ### Prerequisite Common Functions
 
@@ -97,7 +77,8 @@ that the script will retain in the workspace following the running of the code.
 
 `cleanWorkspace()` is a finalising function which removes the `<<-` variables that 
 aren't intended to be retained after the running of the function.
-```{r keep, include=TRUE}
+
+```r
 keep<-function(...){
       #>DESCRIPTION----
       # keeps a record of starting globals
@@ -121,7 +102,8 @@ cleanWorkspace<-function(){
 
 `sourceData()` is used to download the data to the workspace and the working folder.
 
-```{r sourceData function, include=TRUE}
+
+```r
 sourceData<-function(src=URL,expectedfiles="activity.csv",workspaceNames="sourcedData"){
       
       
@@ -161,25 +143,37 @@ sourceData<-function(src=URL,expectedfiles="activity.csv",workspaceNames="source
       str(sourcedData)
       
 }
-
 ```
 
 ## Analysis Run Sequence
 
 The call to the function `sourceData()` loads the data into R.
 
-```{r load data}
 
+```r
 sourceData(URL)
 ```
 
-The data when it was loaded in shows there are `r nrow(sourcedData)` observations 
-and `r length(sourcedData)-1` variables. The `interval` variable represents a 24 hour time
-and a new variable has been introduced called `time` joining the date and time together into a 
-single POSIXct date time. The variables are called `r names(sourcedData)`.
+```
+## Data loaded successfully into the workspace as 'sourcedData'
+```
 
-Running `summary()` on the loaded data shows there are `r metadata$summary[7,1]`
-The observations were taken between `r range(sourcedData$date)`.
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	17568 obs. of  5 variables:
+##  $ steps   : num  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
+##  $ interval: chr  "0000" "0005" "0010" "0015" ...
+##  $ time    : POSIXct, format: "2012-10-01 00:00:00" "2012-10-01 00:05:00" ...
+##  $ timeOnly: POSIXct, format: "2017-04-07 00:00:00" "2017-04-07 00:05:00" ...
+```
+
+The data when it was loaded in shows there are 17568 observations 
+and 4 variables. The `interval` variable represents a 24 hour time
+and a new variable has been introduced called `time` joining the date and time together into a 
+single POSIXct date time. The variables are called steps, date, interval, time, timeOnly.
+
+Running `summary()` on the loaded data shows there are NA's   :2304  
+The observations were taken between 2012-10-01, 2012-11-30.
 
 ### Question 1 - What is mean total number of steps taken per day?
 
