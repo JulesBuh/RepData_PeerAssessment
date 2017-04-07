@@ -70,6 +70,9 @@ disregarded for the analysis
 
 • `time`: A variable constructed which joins the observation date with the time
 
+• `constructedData`: This is a transformed version of the `sourcedData` data.frame 
+where all NAs have been replaced with the average value for the interval.
+
 • `Q1`: This is the data.frame associated with Question 1 output
 
 ## System Info and Library Prerequisites
@@ -237,6 +240,32 @@ The **median number** of steps taken per day are
 `r as.integer(median(Q1$steps.Total[Q1$steps.Total!=0]))`  (to nearest whole number).
 
 ### Question 2 - What is the average daily activity pattern?
+
+Running `summary()` on the loaded data shows there are `r metadata$summary[7,1]`
+The NA values occur for whole days so the script will attempt to impute values
+based on the average interval.
+
+```{r, echo=TRUE}
+
+      Q2<-as.data.frame(summarise(group_by(sourcedData,timeOnly,interval),
+                                  mean(steps,na.rm = TRUE)))
+#create a subset of the data where NAs occur
+      constructedData<-subset(sourcedData,is.na(sourcedData$steps))
+#impute the average of the interval where there is the NA
+      constructedData$steps<-Q2$`mean(steps, na.rm = TRUE)`
+#bind the two dataframes together
+      constructedData<-bind_rows(constructedData,subset(sourcedData,!is.na(sourcedData$steps)))
+#reorder by time
+      constructedData<-arrange(constructedData, time)
+      
+      str(constructedData)
+      
+      NAcount<-sum(is.na(constructedData$steps))
+```
+
+There were **`r sum(is.na(sourcedData$steps))` NAs** in the `sourcedData` data.
+There are **`r NAcount` NAs** in the `constructedData` data.
+
 
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
 

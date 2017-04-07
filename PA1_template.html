@@ -175,6 +175,7 @@ $(document).ready(function () {
 <p>• <code>sourcedData</code>: The data.frame that was read into R</p>
 <p>• <code>timeOnly</code>: A variable constructed which converts the interval into a time Note that this stores the current system time data with this value which is to be disregarded for the analysis</p>
 <p>• <code>time</code>: A variable constructed which joins the observation date with the time</p>
+<p>• <code>constructedData</code>: This is a transformed version of the <code>sourcedData</code> data.frame where all NAs have been replaced with the average value for the interval.</p>
 <p>• <code>Q1</code>: This is the data.frame associated with Question 1 output</p>
 </div>
 </div>
@@ -300,6 +301,28 @@ The observations were taken between 2012-10-01, 2012-11-30.</p>
 </div>
 <div id="question-2---what-is-the-average-daily-activity-pattern" class="section level3">
 <h3>Question 2 - What is the average daily activity pattern?</h3>
+<p>Running <code>summary()</code> on the loaded data shows there are NA’s :2304<br />
+The NA values occur for whole days so the script will attempt to impute values based on the average interval.</p>
+<pre class="r"><code>      Q2&lt;-as.data.frame(summarise(group_by(sourcedData,timeOnly,interval),
+                                  mean(steps,na.rm = TRUE)))
+#create a subset of the data where NAs occur
+      constructedData&lt;-subset(sourcedData,is.na(sourcedData$steps))
+#impute the average of the interval where there is the NA
+      constructedData$steps&lt;-Q2$`mean(steps, na.rm = TRUE)`
+#bind the two dataframes together
+      constructedData&lt;-bind_rows(constructedData,subset(sourcedData,!is.na(sourcedData$steps)))
+#reorder by time
+      constructedData&lt;-arrange(constructedData, time)
+      
+      str(constructedData)</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    17568 obs. of  5 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date    : Date, format: &quot;2012-10-01&quot; &quot;2012-10-01&quot; ...
+##  $ interval: chr  &quot;0000&quot; &quot;0005&quot; &quot;0010&quot; &quot;0015&quot; ...
+##  $ time    : POSIXct, format: &quot;2012-10-01 00:00:00&quot; &quot;2012-10-01 00:05:00&quot; ...
+##  $ timeOnly: POSIXct, format: &quot;2017-04-07 00:00:00&quot; &quot;2017-04-07 00:05:00&quot; ...</code></pre>
+<pre class="r"><code>      NAcount&lt;-sum(is.na(constructedData$steps))</code></pre>
+<p>There were <strong>2304 NAs</strong> in the <code>sourcedData</code> data. There are <strong>0 NAs</strong> in the <code>constructedData</code> data.</p>
 </div>
 <div id="question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level3">
 <h3>Question 3 - Are there differences in activity patterns between weekdays and weekends?</h3>

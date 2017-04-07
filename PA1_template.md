@@ -59,6 +59,9 @@ disregarded for the analysis
 
 • `time`: A variable constructed which joins the observation date with the time
 
+• `constructedData`: This is a transformed version of the `sourcedData` data.frame 
+where all NAs have been replaced with the average value for the interval.
+
 • `Q1`: This is the data.frame associated with Question 1 output
 
 ## System Info and Library Prerequisites
@@ -232,6 +235,43 @@ The **median number** of steps taken per day are
 10765  (to nearest whole number).
 
 ### Question 2 - What is the average daily activity pattern?
+
+Running `summary()` on the loaded data shows there are NA's   :2304  
+The NA values occur for whole days so the script will attempt to impute values
+based on the average interval.
+
+
+```r
+      Q2<-as.data.frame(summarise(group_by(sourcedData,timeOnly,interval),
+                                  mean(steps,na.rm = TRUE)))
+#create a subset of the data where NAs occur
+      constructedData<-subset(sourcedData,is.na(sourcedData$steps))
+#impute the average of the interval where there is the NA
+      constructedData$steps<-Q2$`mean(steps, na.rm = TRUE)`
+#bind the two dataframes together
+      constructedData<-bind_rows(constructedData,subset(sourcedData,!is.na(sourcedData$steps)))
+#reorder by time
+      constructedData<-arrange(constructedData, time)
+      
+      str(constructedData)
+```
+
+```
+## Classes 'tbl_df', 'tbl' and 'data.frame':	17568 obs. of  5 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
+##  $ interval: chr  "0000" "0005" "0010" "0015" ...
+##  $ time    : POSIXct, format: "2012-10-01 00:00:00" "2012-10-01 00:05:00" ...
+##  $ timeOnly: POSIXct, format: "2017-04-07 00:00:00" "2017-04-07 00:05:00" ...
+```
+
+```r
+      NAcount<-sum(is.na(constructedData$steps))
+```
+
+There were **2304 NAs** in the `sourcedData` data.
+There are **0 NAs** in the `constructedData` data.
+
 
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
 
