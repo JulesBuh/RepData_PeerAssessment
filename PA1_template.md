@@ -126,8 +126,9 @@ sourceData<-function(src=URL,expectedfiles="activity.csv",workspaceNames="source
       #pads the interval to become a 4 digit time
       sourcedData$interval<<-stringr::str_pad(sourcedData$interval,width=4,side="left",pad="0")
       # combines data and time into a single column called time
-      sourcedData$time<<-as.POSIXct(strptime(paste(sourcedData$date,sourcedData$interval),"%Y-%m-%d %H%M"))
-      sourcedData$timeOnly<<-as.POSIXct(strptime(stringr::str_pad(sourcedData$interval,width=4,side="left",pad="0"),"%H%M"))
+      sourcedData$time<<-paste(sourcedData$date,sourcedData$interval)
+      sourcedData$time<<-as.POSIXct(strptime(sourcedData$time,"%Y-%m-%d %H%M"))
+      sourcedData$timeOnly<<-as.POSIXct(strptime(sourcedData$interval,"%H%M"))
       ## retains the sourcedata variable for the project workspace
       keep("sourcedData")
       }

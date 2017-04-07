@@ -225,8 +225,9 @@ cleanWorkspace&lt;-function(){
       #pads the interval to become a 4 digit time
       sourcedData$interval&lt;&lt;-stringr::str_pad(sourcedData$interval,width=4,side=&quot;left&quot;,pad=&quot;0&quot;)
       # combines data and time into a single column called time
-      sourcedData$time&lt;&lt;-as.POSIXct(strptime(paste(sourcedData$date,sourcedData$interval),&quot;%Y-%m-%d %H%M&quot;))
-      sourcedData$timeOnly&lt;&lt;-as.POSIXct(strptime(stringr::str_pad(sourcedData$interval,width=4,side=&quot;left&quot;,pad=&quot;0&quot;),&quot;%H%M&quot;))
+      sourcedData$time&lt;&lt;-paste(sourcedData$date,sourcedData$interval)
+      sourcedData$time&lt;&lt;-as.POSIXct(strptime(sourcedData$time,&quot;%Y-%m-%d %H%M&quot;))
+      sourcedData$timeOnly&lt;&lt;-as.POSIXct(strptime(sourcedData$interval,&quot;%H%M&quot;))
       ## retains the sourcedata variable for the project workspace
       keep(&quot;sourcedData&quot;)
       }
