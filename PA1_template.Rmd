@@ -23,11 +23,11 @@ rm(Runtime)
 
 ## Questions
 
-      •[What is mean total number of steps taken per day?]
+      •[What is mean total number of steps taken per day?][1]
       
-      •[What is the average daily activity pattern?]
+      •[What is the average daily activity pattern?][2]
       
-      •[Are there differences in activity patterns between weekdays and weekends?]
+      •[Are there differences in activity patterns between weekdays and weekends?][3]
 
 
 ## Description
@@ -62,3 +62,9 @@ URL = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 ### Question 2 - What is the average daily activity pattern?
 
 ### Question 3 - Are there differences in activity patterns between weekdays and weekends?
+
+[1](https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-1---what-is-mean-total-number-of-steps-taken-per-day)
+
+[2](https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-2---what-is-the-average-daily-activity-pattern)
+
+[3](https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd#question-3---are-there-differences-in-activity-patterns-between-weekdays-and-weekends)
