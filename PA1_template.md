@@ -294,6 +294,7 @@ based on the average interval.
 ```
 
 ```r
+      keep("constructedData")
       NAcount<-sum(is.na(constructedData$steps))
 ```
 
@@ -359,7 +360,7 @@ A new factor is made in the column `weekdayType` within the `constructedData` da
                   ifelse(constructedData$day=="Saturday"|constructedData$day=="Sunday",
                   "weekend","weekday"))
 
-      Q3<-split(constructedData,constructedData$weekdayType)
+      Q3<<-split(constructedData,constructedData$weekdayType)
       keep("Q3")
             
       str(Q3)
@@ -387,23 +388,83 @@ A new factor is made in the column `weekdayType` within the `constructedData` da
 
 
 
+
 ```r
-      par( mfrow= c(2,1) )    
+      par( mfrow= c(2,1), mar = c(4,4,3,1) ) 
+
       plot(x=Q3$weekday$timeOnly,y=Q3$weekday$steps,
-           main="Activity on the weekdays",
+           main="Plot3A - Activity on the weekdays",
            xlab="time of day",
            ylab="number of steps",
            col=rgb(.5,.5,.5,.1),
-           pch=20)
+           pch=20
+           )
+      
+      #get the average for the weekdays
+      Q3$avg.Weekday<-as.data.frame(summarise(group_by(Q3$weekday,timeOnly,interval),
+                                         mean(steps,na.rm = TRUE)
+      ))
+      names(Q3$avg.Weekday)<-c("time","interval","steps.Mean")
+      
+      with(Q3$avg.Weekday,points(x=time,
+                            y=steps.Mean,col="red",
+                            type="l",
+                            ylim=c(0,max(sourcedData$steps,na.rm=TRUE))
+      ))
+      
+          #plots the points
       plot(x=Q3$weekend$timeOnly,y=Q3$weekend$steps,
-           main="Activity on the weekend",
+           main="Plot3B - Activity on the weekend days",
            xlab="time of day",
            ylab="number of steps",
            col=rgb(.5,.5,.5,.1),
            pch=20)
+      
+      legend("topleft",
+             legend=c("average number of steps at time interval"),
+             col=c("red"),
+             lty=c(1),
+             lwd=c(1),
+             box.col="transparent",
+             bg = "transparent" )
+      #get the average for the weekends
+      Q3$avg.weekend<-as.data.frame(summarise(group_by(Q3$weekend,timeOnly,interval),
+                                         mean(steps,na.rm = TRUE)
+      ))
+      names(Q3$avg.weekend)<-c("time","interval","steps.Mean")
+      with(Q3$avg.weekend,points(x=time,
+                            y=steps.Mean,col="red",
+                            type="l",
+                            ylim=c(0,max(sourcedData$steps,na.rm=TRUE))
+      ))
+      
+      legend("topleft",
+             legend=c("average number of steps at time interval"),
+             col=c("red"),
+             lty=c(1),
+             lwd=c(1),
+             box.col="transparent",
+             bg = "transparent" )
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+
+Plot 3 separates out the weekly routine into weekend and weekdays. It shows that
+there is a slightly different pattern for weekends.
+
+It appears that within a 5 minute period around 600 steps is what the subjects 
+natural walking pace, and when they are in a rush they can achieve 800 steps 
+within an interval.
+The peak values occur around the mid afternoon for on the weekends and there is 
+generally more activity throughout the day compared to weekdays, whereas the 
+morning period around 9:00 am for both weekends and weekdays but weekdays are faster 
+paced around this period.
+Weekdays also show an ocassional short fast paced spikes around lunch time and at
+around 15:00. ctivity begins to dies dwo naround 19:00 wheras on weekends it can 
+be up to an hour later.
+
+
 
 
 
