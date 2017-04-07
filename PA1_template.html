@@ -140,22 +140,89 @@ $(document).ready(function () {
 </div>
 <div id="variables" class="section level2">
 <h2>Variables</h2>
+<p>included in the source dataset are:</p>
+<p>• <code>steps</code>: Number of steps taking in a 5-minute interval (missing values are coded as NA)</p>
+<p>• <code>date</code>: The date on which the measurement was taken in YYYY-MM-DD format</p>
+<p>• <code>interval</code>: Identifier for the 5-minute interval in which measurement was taken</p>
 </div>
 <div id="system-info-and-library-prerequisites" class="section level2">
 <h2>System Info and Library Prerequisites</h2>
 <div id="system" class="section level3">
 <h3>System</h3>
+<pre><code>## R version    R version 3.3.2 (2016-10-31)</code></pre>
+<pre><code>## OS   mingw32</code></pre>
 </div>
 <div id="libraries" class="section level3">
 <h3>Libraries</h3>
+<pre><code>## dplyr 0.5.0 was used during for the production of this analysis</code></pre>
+<pre><code>## stringr 1.1.0 was used during for the production of this analysis</code></pre>
 </div>
 <div id="prerequisite-common-functions" class="section level3">
 <h3>Prerequisite Common Functions</h3>
 <div id="workspace-housekeeping" class="section level4">
 <h4>Workspace Housekeeping</h4>
+<p><code>keep()</code>is an internal function which keeps a record of the important variables that the script will retain in the workspace following the running of the code.</p>
+<p><code>cleanWorkspace()</code> is a finalising function which removes the <code>&lt;&lt;-</code> variables that aren’t intended to be retained after the running of the function.</p>
+<pre class="r"><code>keep&lt;-function(...){
+      #&gt;DESCRIPTION----
+      # keeps a record of starting globals
+      # and appends the desired variables that we wish to keep by the end of the 
+      # script, thereby making all other variables and functions that are made during 
+      # the running of this function as temporary.
+      if(!exists(&quot;GlobalEnvKeep&quot;)){
+            GlobalEnvKeep&lt;&lt;-c(ls(envir = as.environment(globalenv())))
+      }
+      GlobalEnvKeep&lt;&lt;-c(GlobalEnvKeep,...)
+}
+keep() 
+cleanWorkspace&lt;-function(){
+      rm(list= ls(envir=as.environment(globalenv()))[!(ls(envir=as.environment(globalenv())) %in% GlobalEnvKeep )],
+         envir=as.environment(globalenv()))
+      rm(keep,envir=as.environment(globalenv()))
+}</code></pre>
 </div>
 <div id="retrieve-data-files" class="section level4">
 <h4>Retrieve data files</h4>
+<p><code>sourceData()</code> is used to download the data to the workspace and the working folder.</p>
+<pre class="r"><code>sourceData&lt;-function(src=URL,expectedfiles=&quot;activity.csv&quot;,workspaceNames=&quot;sourcedData&quot;){
+      
+      
+      if(!file.exists(expectedfiles)){
+            message(&quot;downloading files&quot;)
+            download.file(src,&quot;data.zip&quot;)
+            unzip(&quot;data.zip&quot;)
+            file.remove(&quot;data.zip&quot;)
+      }
+      
+      columnClassPreDefined&lt;-c(&quot;numeric&quot;,&quot;character&quot;,&quot;character&quot;)
+      ## This first line will likely take a few seconds to load
+      if (!exists(workspaceNames)){sourcedData&lt;&lt;- read.csv(expectedfiles,
+                                                           colClasses=columnClassPreDefined,
+                                                           header = TRUE,
+                                                           stringsAsFactors = FALSE,
+                                                           na.strings = &quot;NA&quot;)
+      #change the date column to a date type field
+      sourcedData$date&lt;&lt;-as.Date(sourcedData$date)
+      #pads the interval to become a 4 digit time
+      sourcedData$interval&lt;&lt;-stringr::str_pad(sourcedData$interval,width=4,side=&quot;left&quot;,pad=&quot;0&quot;)
+      # combines data and time into a single column called time
+      sourcedData$time&lt;&lt;-as.POSIXct(strptime(paste(sourcedData$date,sourcedData$interval),&quot;%Y-%m-%d %H%M&quot;))
+      sourcedData$timeOnly&lt;&lt;-as.POSIXct(strptime(stringr::str_pad(sourcedData$interval,width=4,side=&quot;left&quot;,pad=&quot;0&quot;),&quot;%H%M&quot;))
+      ## retains the sourcedata variable for the project workspace
+      keep(&quot;sourcedData&quot;)
+      }
+      # organising data----
+      sourcedData&lt;&lt;-dplyr::tbl_df(sourcedData)
+      
+      message(&quot;Data loaded successfully into the workspace as 'sourcedData'&quot;)
+      
+      ##creates a container to keep useful metadata as a list
+      metadata&lt;&lt;-list(NULL)
+      metadata$head&lt;&lt;-(head(sourcedData))
+      metadata$summary&lt;&lt;-summary(sourcedData)
+      str(sourcedData)
+      
+}</code></pre>
 </div>
 </div>
 </div>
