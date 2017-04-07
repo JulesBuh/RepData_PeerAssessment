@@ -1,8 +1,9 @@
 # RepData_PeerAssessment
 5.02; Reproducible Research Assignment 1
 
-This assignment required the upload of [PA1_template.Rmd][1] and [PA1_template.html][2] 
-which had to answer the following three questions about the given dataset.
+This assignment required the upload of [PA1_template.md][3], [PA1_template.html][2]
+and there source file [PA1_template.Rmd][1] which had to answer the following three 
+questions about the given dataset.
 
       - What is mean total number of steps taken per day?
       
@@ -27,3 +28,4 @@ The [md file][1] is structured as follows:
 
 [1]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.Rmd
 [2]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.html
+[3]: https://github.com/JulesBuh/RepData_PeerAssessment/blob/master/PA1_template.md

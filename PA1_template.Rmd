@@ -49,6 +49,8 @@ URL = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 
 ## Variables
 
+### pre-process
+
 included in the source dataset are:
 
 • `steps`: Number of steps taking in a 5-minute interval (missing values are coded as NA)
@@ -56,6 +58,17 @@ included in the source dataset are:
 • `date`: The date on which the measurement was taken in YYYY-MM-DD format
 
 • `interval`: Identifier for the 5-minute interval in which measurement was taken
+
+### post-process
+included in the final dataset are:
+
+• `sourcedData`: The data.frame that was read into R
+
+• `timeOnly`: A variable constructed which converts the interval into a time
+Note that this stores the current system time data with this value which is to be 
+disregarded for the analysis
+
+• `time`: A variable constructed which joins the observation date with the time
 
 ## System Info and Library Prerequisites
 
